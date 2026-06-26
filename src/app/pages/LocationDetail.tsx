@@ -117,6 +117,14 @@ export function LocationDetail() {
                     <MapPin className="w-6 h-6 text-indigo-600" />
                     <CardTitle className="text-3xl">{location.nombre}</CardTitle>
                   </div>
+                  {(location.calle || location.ciudad || location.provincia) && (
+                    <div className="flex items-center gap-2 text-gray-500 mt-1">
+                      <MapPin className="w-4 h-4" />
+                      <span className="text-sm">
+                        {[location.calle, location.ciudad, location.codigoPostal, location.provincia].filter(Boolean).join(', ')}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <Badge 
                   variant={location.franjaHoraria === 'ambas' ? 'default' : 'secondary'}

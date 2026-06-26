@@ -403,6 +403,11 @@ export function Dashboard() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <CardTitle className="text-xl mb-1">{location.nombre}</CardTitle>
+                      {(location.calle || location.ciudad) && (
+                        <p className="text-sm text-gray-500 mb-1">
+                          {[location.calle, location.ciudad, location.provincia].filter(Boolean).join(', ')}
+                        </p>
+                      )}
                       {location.contactos && location.contactos.length > 0 && (
                         <CardDescription>
                           {location.contactos[0].nombre || location.contactos[0].telefono || location.contactos[0].email || 'Sin contacto'}

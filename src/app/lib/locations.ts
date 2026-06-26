@@ -15,6 +15,10 @@ export interface LocationImage {
 export interface Location {
   id: string;
   nombre: string;
+  calle: string;
+  ciudad: string;
+  codigoPostal: string;
+  provincia: string;
   contactos: Contact[];
   metros2: number;
   aforo: number;

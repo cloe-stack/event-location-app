@@ -22,6 +22,10 @@ export function LocationForm() {
 
   // Form state
   const [nombre, setNombre] = useState('');
+  const [calle, setCalle] = useState('');
+  const [ciudad, setCiudad] = useState('');
+  const [codigoPostal, setCodigoPostal] = useState('');
+  const [provincia, setProvincia] = useState('');
   const [contactos, setContactos] = useState<Contact[]>([
     { id: crypto.randomUUID(), nombre: '', telefono: '', email: '' }
   ]);
@@ -51,6 +55,10 @@ export function LocationForm() {
       const location = await getLocation(locationId);
       if (location) {
         setNombre(location.nombre);
+        setCalle(location.calle || '');
+        setCiudad(location.ciudad || '');
+        setCodigoPostal(location.codigoPostal || '');
+        setProvincia(location.provincia || '');
         setContactos(location.contactos?.length > 0 ? location.contactos : [{ id: crypto.randomUUID(), nombre: '', telefono: '', email: '' }]);
         setImages(location.images || []);
         setMetros2(location.metros2.toString());
@@ -132,6 +140,10 @@ export function LocationForm() {
 
       const data: LocationFormData = {
         nombre,
+        calle,
+        ciudad,
+        codigoPostal,
+        provincia,
         contactos: validContactos,
         images,
         metros2: parseFloat(metros2) || 0,
@@ -208,6 +220,49 @@ export function LocationForm() {
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
                     required
+                    placeholder="Ej: Villa La Paz"
+                  />
+                </div>
+
+                <h3 className="text-lg font-semibold pt-2">Dirección</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="calle">Calle y número</Label>
+                    <Input
+                      id="calle"
+                      value={calle}
+                      onChange={(e) => setCalle(e.target.value)}
+                      placeholder="Ej: Calle Gran Vía 45"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ciudad">Ciudad</Label>
+                    <Input
+                      id="ciudad"
+                      value={ciudad}
+                      onChange={(e) => setCiudad(e.target.value)}
+                      placeholder="Ej: Madrid"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="codigoPostal">Código Postal</Label>
+                    <Input
+                      id="codigoPostal"
+                      value={codigoPostal}
+                      onChange={(e) => setCodigoPostal(e.target.value)}
+                      placeholder="Ej: 28013"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="provincia">Provincia</Label>
+                    <Input
+                      id="provincia"
+                      value={provincia}
+                      onChange={(e) => setProvincia(e.target.value)}
+                      placeholder="Ej: Madrid"
+                    />
+                  </div>
+                </div>
                     placeholder="Ej: Salón Los Olivos"
                   />
                 </div>
