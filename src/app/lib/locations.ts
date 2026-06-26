@@ -162,7 +162,8 @@ export const deleteLocation = async (id: string): Promise<void> => {
 
 export const uploadImage = async (file: File): Promise<LocationImage> => {
   try {
-    const { data } = await import('./supabase').then(m => m.supabase.auth.getSession());
+    const { supabase: supabaseClient } = await import('./supabase');
+    const { data } = await supabaseClient.auth.getSession();
     const accessToken = data?.session?.access_token;
     
     if (!accessToken) {
@@ -198,7 +199,8 @@ export const uploadImage = async (file: File): Promise<LocationImage> => {
 
 export const deleteImage = async (filePath: string): Promise<void> => {
   try {
-    const { data } = await import('./supabase').then(m => m.supabase.auth.getSession());
+    const { supabase: supabaseClient } = await import('./supabase');
+    const { data } = await supabaseClient.auth.getSession();
     const accessToken = data?.session?.access_token;
     
     if (!accessToken) {
