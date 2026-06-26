@@ -263,9 +263,6 @@ export function LocationForm() {
                     />
                   </div>
                 </div>
-                    placeholder="Ej: Salón Los Olivos"
-                  />
-                </div>
               </div>
 
               {/* Contacts Section */}
