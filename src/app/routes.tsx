@@ -4,6 +4,7 @@ import { Dashboard } from "./pages/Dashboard";
 import { LocationForm } from "./pages/LocationForm";
 import { LocationDetail } from "./pages/LocationDetail";
 import { DevAdmin } from "./pages/DevAdmin";
+import { Profile } from "./pages/Profile";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export const router = createBrowserRouter([
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
+  },
+  {
+    path: "/profile",
+    element: <ProtectedRoute><Profile /></ProtectedRoute>,
   },
   {
     path: "/locations/new",

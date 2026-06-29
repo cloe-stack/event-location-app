@@ -138,6 +138,11 @@ export function LocationForm() {
       // Filter out empty contacts
       const validContactos = contactos.filter(c => c.nombre || c.telefono || c.email);
 
+      // Get current user name
+      const { supabase: supabaseClient } = await import('../lib/supabase');
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      const userName = sessionData?.session?.user?.user_metadata?.name || sessionData?.session?.user?.email || '';
+
       const data: LocationFormData = {
         nombre,
         calle,
@@ -159,6 +164,8 @@ export function LocationForm() {
         posibilidadMusica,
         potenciaLuz,
         comentarios,
+        createdBy: userName,
+        createdByEmail: sessionData?.session?.user?.email || '',
       };
 
       if (isEditing && id) {

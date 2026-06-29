@@ -103,10 +103,10 @@ export function Dashboard() {
         // Search in basic fields
         const matchesBasic = loc.nombre.toLowerCase().includes(query) ||
           loc.comentarios.toLowerCase().includes(query) ||
-          (loc.calle || "").toLowerCase().includes(query) ||
-          (loc.ciudad || "").toLowerCase().includes(query) ||
-          (loc.provincia || "").toLowerCase().includes(query) ||
-          (loc.codigoPostal || "").toLowerCase().includes(query);
+          (loc.calle || '').toLowerCase().includes(query) ||
+          (loc.ciudad || '').toLowerCase().includes(query) ||
+          (loc.provincia || '').toLowerCase().includes(query) ||
+          (loc.codigoPostal || '').toLowerCase().includes(query);
         
         // Search in contacts
         const matchesContacts = loc.contactos?.some(contact =>
@@ -214,10 +214,16 @@ export function Dashboard() {
                 <p className="text-sm text-gray-600">Bienvenido, {userName}</p>
               </div>
             </div>
-            <Button onClick={handleLogout} variant="outline">
-              <LogOut className="w-4 h-4 mr-2" />
-              Cerrar Sesión
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button onClick={() => navigate('/profile')} variant="outline">
+                <User className="w-4 h-4 mr-2" />
+                Mi perfil
+              </Button>
+              <Button onClick={handleLogout} variant="outline">
+                <LogOut className="w-4 h-4 mr-2" />
+                Cerrar Sesión
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -416,6 +422,11 @@ export function Dashboard() {
                         <CardDescription>
                           {location.contactos[0].nombre || location.contactos[0].telefono || location.contactos[0].email || 'Sin contacto'}
                         </CardDescription>
+                      )}
+                      {location.createdBy && (
+                        <p className="text-xs text-gray-400 mt-1">
+                          Añadido por {location.createdBy}
+                        </p>
                       )}
                     </div>
                     <Badge variant={location.franjaHoraria === 'ambas' ? 'default' : 'secondary'}>
