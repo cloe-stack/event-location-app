@@ -41,7 +41,7 @@ export interface Location {
 export type LocationFormData = Omit<Location, 'id' | 'createdAt' | 'updatedAt'>;
 
 const getAuthHeaders = async () => {
-  const { data } = await import('./supabase').then(m => m.supabase.auth.getSession());
+  const { data } = await (await import("./supabase")).supabase.auth.getSession();
   const accessToken = data?.session?.access_token;
   
   console.log('Getting auth headers - Session exists:', !!data?.session);
