@@ -6,9 +6,9 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Switch } from '../components/ui/switch';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { toast } from 'sonner';
-import { ArrowLeft, Save, Plus, Trash2, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, Upload, X, Image as ImageIcon, FileImage } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 
 export function LocationForm() {
@@ -19,8 +19,9 @@ export function LocationForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(isEditing);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isUploadingBlueprint, setIsUploadingBlueprint] = useState(false);
 
-  // Form state
+  // Basic info
   const [nombre, setNombre] = useState('');
   const [calle, setCalle] = useState('');
   const [ciudad, setCiudad] = useState('');
@@ -30,24 +31,49 @@ export function LocationForm() {
     { id: crypto.randomUUID(), nombre: '', telefono: '', email: '' }
   ]);
   const [images, setImages] = useState<LocationImage[]>([]);
+  const [blueprints, setBlueprints] = useState<LocationImage[]>([]);
+
+  // Dimensions & capacity
   const [metros2, setMetros2] = useState('');
-  const [aforo, setAforo] = useState('');
+  const [aforoExterior, setAforoExterior] = useState('');
+  const [aforoInterior, setAforoInterior] = useState('');
+  const [numeroBanos, setNumeroBanos] = useState('');
+  const [precio, setPrecio] = useState('');
+
+  // Facilities
   const [accesoParkingSi, setAccesoParkingSi] = useState(false);
   const [jardin, setJardin] = useState(false);
   const [terraza, setTerraza] = useState(false);
   const [piscina, setPiscina] = useState(false);
-  const [numeroBanos, setNumeroBanos] = useState('');
   const [cocina, setCocina] = useState(false);
+
+  // Schedule
   const [franjaHoraria, setFranjaHoraria] = useState<'diurna' | 'nocturna' | 'ambas'>('diurna');
-  const [horarioMaximo, setHorarioMaximo] = useState('');
-  const [posibilidadMusica, setPosibilidadMusica] = useState(false);
+  const [horarioExterior, setHorarioExterior] = useState('');
+  const [horarioInterior, setHorarioInterior] = useState('');
+  const [horarioMontaje, setHorarioMontaje] = useState('');
+  const [horarioDesmontaje, setHorarioDesmontaje] = useState('');
+
+  // Music
+  const [musicaExterior, setMusicaExterior] = useState(false);
+  const [musicaInterior, setMusicaInterior] = useState(false);
+
+  // Exclusivities
+  const [exclusividadCatering, setExclusividadCatering] = useState(false);
+  const [exclusividadAudiovisuales, setExclusividadAudiovisuales] = useState(false);
+  const [exclusividadOtros, setExclusividadOtros] = useState(false);
+
+  // Includes
+  const [incluyeSeguridad, setIncluyeSeguridad] = useState(false);
+  const [incluyeMantenimiento, setIncluyeMantenimiento] = useState(false);
+  const [incluyeLimpieza, setIncluyeLimpieza] = useState(false);
+
+  // Other
   const [potenciaLuz, setPotenciaLuz] = useState('');
   const [comentarios, setComentarios] = useState('');
 
   useEffect(() => {
-    if (isEditing && id) {
-      loadLocation(id);
-    }
+    if (isEditing && id) loadLocation(id);
   }, [id, isEditing]);
 
   const loadLocation = async (locationId: string) => {
@@ -61,19 +87,32 @@ export function LocationForm() {
         setProvincia(location.provincia || '');
         setContactos(location.contactos?.length > 0 ? location.contactos : [{ id: crypto.randomUUID(), nombre: '', telefono: '', email: '' }]);
         setImages(location.images || []);
-        setMetros2(location.metros2.toString());
-        setAforo(location.aforo.toString());
-        setAccesoParkingSi(location.accesoParkingSi);
-        setJardin(location.jardin);
-        setTerraza(location.terraza);
-        setPiscina(location.piscina);
-        setNumeroBanos(location.numeroBanos.toString());
-        setCocina(location.cocina);
-        setFranjaHoraria(location.franjaHoraria);
-        setHorarioMaximo(location.horarioMaximo);
-        setPosibilidadMusica(location.posibilidadMusica);
-        setPotenciaLuz(location.potenciaLuz);
-        setComentarios(location.comentarios);
+        setBlueprints(location.blueprints || []);
+        setMetros2(location.metros2?.toString() || '');
+        setAforoExterior(location.aforoExterior?.toString() || '');
+        setAforoInterior(location.aforoInterior?.toString() || '');
+        setNumeroBanos(location.numeroBanos?.toString() || '');
+        setPrecio(location.precio?.toString() || '');
+        setAccesoParkingSi(location.accesoParkingSi || false);
+        setJardin(location.jardin || false);
+        setTerraza(location.terraza || false);
+        setPiscina(location.piscina || false);
+        setCocina(location.cocina || false);
+        setFranjaHoraria(location.franjaHoraria || 'diurna');
+        setHorarioExterior(location.horarioExterior || '');
+        setHorarioInterior(location.horarioInterior || '');
+        setHorarioMontaje(location.horarioMontaje || '');
+        setHorarioDesmontaje(location.horarioDesmontaje || '');
+        setMusicaExterior(location.musicaExterior || false);
+        setMusicaInterior(location.musicaInterior || false);
+        setExclusividadCatering(location.exclusividadCatering || false);
+        setExclusividadAudiovisuales(location.exclusividadAudiovisuales || false);
+        setExclusividadOtros(location.exclusividadOtros || false);
+        setIncluyeSeguridad(location.incluyeSeguridad || false);
+        setIncluyeMantenimiento(location.incluyeMantenimiento || false);
+        setIncluyeLimpieza(location.incluyeLimpieza || false);
+        setPotenciaLuz(location.potenciaLuz || '');
+        setComentarios(location.comentarios || '');
       }
     } catch (error) {
       toast.error('Error al cargar la localización');
@@ -83,99 +122,85 @@ export function LocationForm() {
     }
   };
 
-  const addContact = () => {
-    setContactos([...contactos, { id: crypto.randomUUID(), nombre: '', telefono: '', email: '' }]);
-  };
-
-  const removeContact = (id: string) => {
-    if (contactos.length > 1) {
-      setContactos(contactos.filter(c => c.id !== id));
-    }
-  };
-
-  const updateContact = (id: string, field: keyof Contact, value: string) => {
-    setContactos(contactos.map(c => c.id === id ? { ...c, [field]: value } : c));
-  };
+  const addContact = () => setContactos([...contactos, { id: crypto.randomUUID(), nombre: '', telefono: '', email: '' }]);
+  const removeContact = (id: string) => { if (contactos.length > 1) setContactos(contactos.filter(c => c.id !== id)); };
+  const updateContact = (id: string, field: keyof Contact, value: string) => setContactos(contactos.map(c => c.id === id ? { ...c, [field]: value } : c));
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-
     setIsUploadingImage(true);
-    
     try {
-      const uploadPromises = Array.from(files).map(file => uploadImage(file));
-      const uploadedImages = await Promise.all(uploadPromises);
-      setImages([...images, ...uploadedImages]);
-      toast.success(`${uploadedImages.length} imagen(es) subida(s) con éxito`);
-    } catch (error) {
-      toast.error('Error al subir las imágenes');
-      console.error('Error uploading images:', error);
-    } finally {
-      setIsUploadingImage(false);
-      // Reset input
-      e.target.value = '';
-    }
+      const uploaded = await Promise.all(Array.from(files).map(f => uploadImage(f)));
+      setImages([...images, ...uploaded]);
+      toast.success(`${uploaded.length} foto(s) subida(s)`);
+    } catch { toast.error('Error al subir fotos'); }
+    finally { setIsUploadingImage(false); e.target.value = ''; }
+  };
+
+  const handleBlueprintUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setIsUploadingBlueprint(true);
+    try {
+      const uploaded = await Promise.all(Array.from(files).map(f => uploadImage(f)));
+      setBlueprints([...blueprints, ...uploaded]);
+      toast.success(`${uploaded.length} plano(s) subido(s)`);
+    } catch { toast.error('Error al subir planos'); }
+    finally { setIsUploadingBlueprint(false); e.target.value = ''; }
   };
 
   const handleRemoveImage = async (index: number) => {
-    const image = images[index];
     try {
-      await deleteImage(image.filePath);
+      await deleteImage(images[index].filePath);
       setImages(images.filter((_, i) => i !== index));
-      toast.success('Imagen eliminada');
-    } catch (error) {
-      toast.error('Error al eliminar la imagen');
-      console.error('Error deleting image:', error);
-    }
+      toast.success('Foto eliminada');
+    } catch { toast.error('Error al eliminar foto'); }
+  };
+
+  const handleRemoveBlueprint = async (index: number) => {
+    try {
+      await deleteImage(blueprints[index].filePath);
+      setBlueprints(blueprints.filter((_, i) => i !== index));
+      toast.success('Plano eliminado');
+    } catch { toast.error('Error al eliminar plano'); }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
     try {
-      // Filter out empty contacts
       const validContactos = contactos.filter(c => c.nombre || c.telefono || c.email);
-
-      // Get current user name
       const { supabase: supabaseClient } = await import('../lib/supabase');
       const { data: sessionData } = await supabaseClient.auth.getSession();
       const userName = sessionData?.session?.user?.user_metadata?.name || sessionData?.session?.user?.email || '';
 
       const data: LocationFormData = {
-        nombre,
-        calle,
-        ciudad,
-        codigoPostal,
-        provincia,
-        contactos: validContactos,
-        images,
+        nombre, calle, ciudad, codigoPostal, provincia,
+        contactos: validContactos, images, blueprints,
         metros2: parseFloat(metros2) || 0,
-        aforo: parseInt(aforo) || 0,
-        accesoParkingSi,
-        jardin,
-        terraza,
-        piscina,
+        aforoExterior: parseInt(aforoExterior) || 0,
+        aforoInterior: parseInt(aforoInterior) || 0,
         numeroBanos: parseInt(numeroBanos) || 0,
-        cocina,
-        franjaHoraria,
-        horarioMaximo,
-        posibilidadMusica,
-        potenciaLuz,
-        comentarios,
+        precio: parseFloat(precio) || 0,
+        accesoParkingSi, jardin, terraza, piscina, cocina,
+        franjaHoraria, horarioExterior, horarioInterior,
+        horarioMontaje, horarioDesmontaje,
+        musicaExterior, musicaInterior,
+        exclusividadCatering, exclusividadAudiovisuales, exclusividadOtros,
+        incluyeSeguridad, incluyeMantenimiento, incluyeLimpieza,
+        potenciaLuz, comentarios,
         createdBy: userName,
         createdByEmail: sessionData?.session?.user?.email || '',
       };
 
       if (isEditing && id) {
         await updateLocation(id, data);
-        toast.success('Localización actualizada con éxito');
+        toast.success('Localización actualizada');
       } else {
         await createLocation(data);
-        toast.success('Localización creada con éxito');
+        toast.success('Localización creada');
       }
-
       navigate('/dashboard');
     } catch (error) {
       toast.error('Error al guardar la localización');
@@ -185,404 +210,322 @@ export function LocationForm() {
     }
   };
 
-  if (isFetching) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-600">Cargando...</div>
-      </div>
-    );
-  }
+  if (isFetching) return <div className="min-h-screen flex items-center justify-center"><p>Cargando...</p></div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Button
-          variant="ghost"
-          onClick={() => navigate('/dashboard')}
-          className="mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Volver al Dashboard
-        </Button>
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+          <Button variant="ghost" onClick={() => navigate('/dashboard')}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver
+          </Button>
+          <h1 className="text-xl font-bold">{isEditing ? 'Editar Localización' : 'Nueva Localización'}</h1>
+          <Button type="submit" form="location-form" disabled={isLoading}>
+            <Save className="w-4 h-4 mr-2" />
+            {isLoading ? 'Guardando...' : 'Guardar'}
+          </Button>
+        </div>
+      </header>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">
-              {isEditing ? 'Editar Localización' : 'Nueva Localización'}
-            </CardTitle>
-            <CardDescription>
-              Completa todos los campos con la información de la localización
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Basic Info */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Información Básica</h3>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="nombre">Nombre de la localización *</Label>
-                  <Input
-                    id="nombre"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
-                    required
-                    placeholder="Ej: Villa La Paz"
-                  />
+      <main className="max-w-4xl mx-auto px-4 py-8">
+        <form id="location-form" onSubmit={handleSubmit} className="space-y-8">
+
+          {/* Basic Info */}
+          <Card>
+            <CardHeader><CardTitle>Información Básica</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="nombre">Nombre *</Label>
+                <Input id="nombre" value={nombre} onChange={e => setNombre(e.target.value)} required placeholder="Ej: Villa La Paz" />
+              </div>
+              <h3 className="font-semibold">Dirección</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2 md:col-span-2">
+                  <Label>Calle y número</Label>
+                  <Input value={calle} onChange={e => setCalle(e.target.value)} placeholder="Ej: Calle Gran Vía 45" />
                 </div>
-
-                <h3 className="text-lg font-semibold pt-2">Dirección</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="calle">Calle y número</Label>
-                    <Input
-                      id="calle"
-                      value={calle}
-                      onChange={(e) => setCalle(e.target.value)}
-                      placeholder="Ej: Calle Gran Vía 45"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="ciudad">Ciudad</Label>
-                    <Input
-                      id="ciudad"
-                      value={ciudad}
-                      onChange={(e) => setCiudad(e.target.value)}
-                      placeholder="Ej: Madrid"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="codigoPostal">Código Postal</Label>
-                    <Input
-                      id="codigoPostal"
-                      value={codigoPostal}
-                      onChange={(e) => setCodigoPostal(e.target.value)}
-                      placeholder="Ej: 28013"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="provincia">Provincia</Label>
-                    <Input
-                      id="provincia"
-                      value={provincia}
-                      onChange={(e) => setProvincia(e.target.value)}
-                      placeholder="Ej: Madrid"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label>Ciudad</Label>
+                  <Input value={ciudad} onChange={e => setCiudad(e.target.value)} placeholder="Ej: Madrid" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Código Postal</Label>
+                  <Input value={codigoPostal} onChange={e => setCodigoPostal(e.target.value)} placeholder="Ej: 28013" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Provincia</Label>
+                  <Input value={provincia} onChange={e => setProvincia(e.target.value)} placeholder="Ej: Madrid" />
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Contacts Section */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Contactos</h3>
-                  <Button type="button" variant="outline" size="sm" onClick={addContact}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Añadir Contacto
-                  </Button>
-                </div>
-                
-                {contactos.map((contacto, index) => (
-                  <Card key={contacto.id} className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <Label className="text-sm font-medium">Contacto {index + 1}</Label>
-                        {contactos.length > 1 && (
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeContact(contacto.id)}
-                          >
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                          </Button>
-                        )}
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div className="space-y-1">
-                          <Label htmlFor={`nombre-${contacto.id}`} className="text-sm">Nombre</Label>
-                          <Input
-                            id={`nombre-${contacto.id}`}
-                            value={contacto.nombre}
-                            onChange={(e) => updateContact(contacto.id, 'nombre', e.target.value)}
-                            placeholder="Juan Pérez"
-                          />
-                        </div>
-                        
-                        <div className="space-y-1">
-                          <Label htmlFor={`telefono-${contacto.id}`} className="text-sm">Teléfono</Label>
-                          <Input
-                            id={`telefono-${contacto.id}`}
-                            value={contacto.telefono}
-                            onChange={(e) => updateContact(contacto.id, 'telefono', e.target.value)}
-                            placeholder="600 123 456"
-                          />
-                        </div>
-                        
-                        <div className="space-y-1">
-                          <Label htmlFor={`email-${contacto.id}`} className="text-sm">Email</Label>
-                          <Input
-                            id={`email-${contacto.id}`}
-                            type="email"
-                            value={contacto.email}
-                            onChange={(e) => updateContact(contacto.id, 'email', e.target.value)}
-                            placeholder="juan@example.com"
-                          />
-                        </div>
-                      </div>
+          {/* Contacts */}
+          <Card>
+            <CardHeader><CardTitle>Contactos</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              {contactos.map((contact, index) => (
+                <div key={contact.id} className="border rounded-lg p-4 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-sm">Contacto {index + 1}</span>
+                    {contactos.length > 1 && (
+                      <Button type="button" variant="ghost" size="sm" onClick={() => removeContact(contact.id)}>
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div className="space-y-1">
+                      <Label>Nombre</Label>
+                      <Input value={contact.nombre} onChange={e => updateContact(contact.id, 'nombre', e.target.value)} placeholder="Nombre" />
                     </div>
-                  </Card>
+                    <div className="space-y-1">
+                      <Label>Teléfono</Label>
+                      <Input value={contact.telefono} onChange={e => updateContact(contact.id, 'telefono', e.target.value)} placeholder="600 000 000" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Email</Label>
+                      <Input type="email" value={contact.email} onChange={e => updateContact(contact.id, 'email', e.target.value)} placeholder="email@ejemplo.com" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <Button type="button" variant="outline" onClick={addContact}>
+                <Plus className="w-4 h-4 mr-2" /> Añadir contacto
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Photos */}
+          <Card>
+            <CardHeader><CardTitle>Fotos</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <label>
+                  <Button type="button" variant="outline" disabled={isUploadingImage} asChild>
+                    <span><Upload className="w-4 h-4 mr-2" />{isUploadingImage ? 'Subiendo...' : 'Subir Fotos'}</span>
+                  </Button>
+                  <input type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload} />
+                </label>
+              </div>
+              {images.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {images.map((img, i) => (
+                    <div key={i} className="relative group">
+                      <img src={img.url} alt="" className="w-full h-32 object-cover rounded-lg" />
+                      <button type="button" onClick={() => handleRemoveImage(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="border-2 border-dashed rounded-lg p-8 text-center text-gray-500">
+                  <ImageIcon className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                  <p>No hay fotos</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Blueprints */}
+          <Card>
+            <CardHeader><CardTitle>Planos</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <label>
+                  <Button type="button" variant="outline" disabled={isUploadingBlueprint} asChild>
+                    <span><FileImage className="w-4 h-4 mr-2" />{isUploadingBlueprint ? 'Subiendo...' : 'Subir Planos'}</span>
+                  </Button>
+                  <input type="file" accept="image/*,.pdf" multiple className="hidden" onChange={handleBlueprintUpload} />
+                </label>
+              </div>
+              {blueprints.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {blueprints.map((bp, i) => (
+                    <div key={i} className="relative group">
+                      <img src={bp.url} alt="" className="w-full h-32 object-cover rounded-lg" />
+                      <button type="button" onClick={() => handleRemoveBlueprint(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="border-2 border-dashed rounded-lg p-8 text-center text-gray-500">
+                  <FileImage className="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                  <p>No hay planos</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Dimensions & Capacity */}
+          <Card>
+            <CardHeader><CardTitle>Dimensiones y Capacidad</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label>Metros cuadrados</Label>
+                  <Input type="number" value={metros2} onChange={e => setMetros2(e.target.value)} min="0" placeholder="200" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Aforo Exterior</Label>
+                  <Input type="number" value={aforoExterior} onChange={e => setAforoExterior(e.target.value)} min="0" placeholder="100" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Aforo Interior</Label>
+                  <Input type="number" value={aforoInterior} onChange={e => setAforoInterior(e.target.value)} min="0" placeholder="100" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Cantidad de baños</Label>
+                  <Input type="number" value={numeroBanos} onChange={e => setNumeroBanos(e.target.value)} min="0" placeholder="2" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Precio (€)</Label>
+                  <Input type="number" value={precio} onChange={e => setPrecio(e.target.value)} min="0" placeholder="5000" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Schedule */}
+          <Card>
+            <CardHeader><CardTitle>Horarios</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Franja Horaria</Label>
+                  <Select value={franjaHoraria} onValueChange={(v) => setFranjaHoraria(v as 'diurna' | 'nocturna' | 'ambas')}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="diurna">Diurna</SelectItem>
+                      <SelectItem value="nocturna">Nocturna</SelectItem>
+                      <SelectItem value="ambas">Ambas</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Horario Exterior</Label>
+                  <Input type="time" value={horarioExterior} onChange={e => setHorarioExterior(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Horario Interior</Label>
+                  <Input type="time" value={horarioInterior} onChange={e => setHorarioInterior(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Horario Montaje</Label>
+                  <Input type="time" value={horarioMontaje} onChange={e => setHorarioMontaje(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Horario Desmontaje</Label>
+                  <Input type="time" value={horarioDesmontaje} onChange={e => setHorarioDesmontaje(e.target.value)} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Facilities */}
+          <Card>
+            <CardHeader><CardTitle>Instalaciones</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {[
+                  { label: 'Acceso a Parking', value: accesoParkingSi, set: setAccesoParkingSi },
+                  { label: 'Jardín', value: jardin, set: setJardin },
+                  { label: 'Terraza', value: terraza, set: setTerraza },
+                  { label: 'Piscina', value: piscina, set: setPiscina },
+                  { label: 'Cocina', value: cocina, set: setCocina },
+                ].map(({ label, value, set }) => (
+                  <div key={label} className="flex items-center justify-between p-3 border rounded-lg">
+                    <Label className="cursor-pointer">{label}</Label>
+                    <Switch checked={value} onCheckedChange={set} />
+                  </div>
                 ))}
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Images Section */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Fotos de la Localización</h3>
-                  <div>
-                    <input
-                      type="file"
-                      id="image-upload"
-                      multiple
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => document.getElementById('image-upload')?.click()}
-                      disabled={isUploadingImage}
-                    >
-                      {isUploadingImage ? (
-                        <>Subiendo...</>
-                      ) : (
-                        <>
-                          <Upload className="w-4 h-4 mr-2" />
-                          Subir Fotos
-                        </>
-                      )}
-                    </Button>
-                  </div>
+          {/* Music */}
+          <Card>
+            <CardHeader><CardTitle>Música</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <Label>Música Exterior</Label>
+                  <Switch checked={musicaExterior} onCheckedChange={setMusicaExterior} />
                 </div>
-                
-                {images.length > 0 ? (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {images.map((image, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={image.url}
-                          alt={`Imagen ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg border"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => handleRemoveImage(index)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="border-2 border-dashed rounded-lg p-8 text-center text-gray-500">
-                    <ImageIcon className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-                    <p>No hay fotos. Haz clic en "Subir Fotos" para añadir imágenes.</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Dimensions & Capacity */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Dimensiones y Capacidad</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="metros2">Metros cuadrados *</Label>
-                    <Input
-                      id="metros2"
-                      type="number"
-                      value={metros2}
-                      onChange={(e) => setMetros2(e.target.value)}
-                      required
-                      min="0"
-                      step="0.01"
-                      placeholder="200"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="aforo">Aforo (personas) *</Label>
-                    <Input
-                      id="aforo"
-                      type="number"
-                      value={aforo}
-                      onChange={(e) => setAforo(e.target.value)}
-                      required
-                      min="0"
-                      placeholder="100"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="numeroBanos">Número de baños *</Label>
-                    <Input
-                      id="numeroBanos"
-                      type="number"
-                      value={numeroBanos}
-                      onChange={(e) => setNumeroBanos(e.target.value)}
-                      required
-                      min="0"
-                      placeholder="2"
-                    />
-                  </div>
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <Label>Música Interior</Label>
+                  <Switch checked={musicaInterior} onCheckedChange={setMusicaInterior} />
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Facilities */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Instalaciones</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <Label htmlFor="parking" className="cursor-pointer">Acceso a parking</Label>
-                    <Switch
-                      id="parking"
-                      checked={accesoParkingSi}
-                      onCheckedChange={setAccesoParkingSi}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <Label htmlFor="jardin" className="cursor-pointer">Jardín</Label>
-                    <Switch
-                      id="jardin"
-                      checked={jardin}
-                      onCheckedChange={setJardin}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <Label htmlFor="terraza" className="cursor-pointer">Terraza</Label>
-                    <Switch
-                      id="terraza"
-                      checked={terraza}
-                      onCheckedChange={setTerraza}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <Label htmlFor="piscina" className="cursor-pointer">Piscina</Label>
-                    <Switch
-                      id="piscina"
-                      checked={piscina}
-                      onCheckedChange={setPiscina}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <Label htmlFor="cocina" className="cursor-pointer">Cocina</Label>
-                    <Switch
-                      id="cocina"
-                      checked={cocina}
-                      onCheckedChange={setCocina}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <Label htmlFor="musica" className="cursor-pointer">Posibilidad de música</Label>
-                    <Switch
-                      id="musica"
-                      checked={posibilidadMusica}
-                      onCheckedChange={setPosibilidadMusica}
-                    />
-                  </div>
+          {/* Exclusivities */}
+          <Card>
+            <CardHeader><CardTitle>Exclusividades</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <Label>Exclusividad Catering</Label>
+                  <Switch checked={exclusividadCatering} onCheckedChange={setExclusividadCatering} />
+                </div>
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <Label>Exclusividad Audiovisuales</Label>
+                  <Switch checked={exclusividadAudiovisuales} onCheckedChange={setExclusividadAudiovisuales} />
+                </div>
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <Label>Exclusividad Otros</Label>
+                  <Switch checked={exclusividadOtros} onCheckedChange={setExclusividadOtros} />
                 </div>
               </div>
+              {exclusividadOtros && (
+                <p className="text-sm text-gray-500 italic">💡 Si hay exclusividad de otros proveedores, indícalo en los comentarios.</p>
+              )}
+            </CardContent>
+          </Card>
 
-              {/* Schedule & Technical */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Horario y Especificaciones Técnicas</h3>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="franjaHoraria">Franja horaria *</Label>
-                    <Select value={franjaHoraria} onValueChange={(value: any) => setFranjaHoraria(value)}>
-                      <SelectTrigger id="franjaHoraria">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="diurna">Diurna</SelectItem>
-                        <SelectItem value="nocturna">Nocturna</SelectItem>
-                        <SelectItem value="ambas">Ambas</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="horarioMaximo">Horario máximo *</Label>
-                    <Input
-                      id="horarioMaximo"
-                      type="time"
-                      value={horarioMaximo}
-                      onChange={(e) => setHorarioMaximo(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="potenciaLuz">Potencia de luz *</Label>
-                    <Input
-                      id="potenciaLuz"
-                      value={potenciaLuz}
-                      onChange={(e) => setPotenciaLuz(e.target.value)}
-                      required
-                      placeholder="Ej: 10 kW"
-                    />
-                  </div>
+          {/* Includes */}
+          <Card>
+            <CardHeader><CardTitle>Incluye</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <Label>Seguridad</Label>
+                  <Switch checked={incluyeSeguridad} onCheckedChange={setIncluyeSeguridad} />
+                </div>
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <Label>Mantenimiento</Label>
+                  <Switch checked={incluyeMantenimiento} onCheckedChange={setIncluyeMantenimiento} />
+                </div>
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <Label>Limpieza</Label>
+                  <Switch checked={incluyeLimpieza} onCheckedChange={setIncluyeLimpieza} />
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Comments */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Comentarios Adicionales</h3>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="comentarios">Comentarios</Label>
-                  <Textarea
-                    id="comentarios"
-                    value={comentarios}
-                    onChange={(e) => setComentarios(e.target.value)}
-                    placeholder="Información adicional relevante sobre la localización..."
-                    rows={4}
-                  />
-                </div>
+          {/* Other */}
+          <Card>
+            <CardHeader><CardTitle>Otros detalles</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Potencia de luz</Label>
+                <Input value={potenciaLuz} onChange={e => setPotenciaLuz(e.target.value)} placeholder="Ej: 10 kW" />
               </div>
+              <div className="space-y-2">
+                <Label>Comentarios</Label>
+                <Textarea value={comentarios} onChange={e => setComentarios(e.target.value)} placeholder="Información adicional..." rows={4} />
+              </div>
+            </CardContent>
+          </Card>
 
-              {/* Submit Buttons */}
-              <div className="flex gap-4 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate('/dashboard')}
-                  className="flex-1"
-                >
-                  Cancelar
-                </Button>
-                <Button type="submit" disabled={isLoading} className="flex-1">
-                  <Save className="w-4 h-4 mr-2" />
-                  {isLoading ? 'Guardando...' : isEditing ? 'Actualizar' : 'Crear'}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+        </form>
+      </main>
     </div>
   );
 }

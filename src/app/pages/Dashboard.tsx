@@ -24,7 +24,6 @@ import {
   Music,
   Utensils,
   Clock,
-  Lightbulb,
   Filter,
   X
 } from 'lucide-react';
@@ -398,14 +397,14 @@ export function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredLocations.map((location) => (
-              <Card key={location.id} className="hover:shadow-lg transition-shadow overflow-hidden">
+              <Card key={location.id} className="hover:shadow-lg transition-shadow overflow-hidden cursor-pointer group" onClick={() => navigate(`/locations/${location.id}`)}>
                 {/* Image Preview */}
                 {location.images && location.images.length > 0 && (
                   <div className="w-full h-48 overflow-hidden bg-gray-100">
                     <img 
                       src={location.images[0].url} 
                       alt={location.nombre}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                     />
                   </div>
                 )}
@@ -444,63 +443,33 @@ export function Dashboard() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-gray-500" />
-                      <span>{location.aforo} pers.</span>
+                      <span>{(location.aforoInterior || 0) + (location.aforoExterior || 0)} pers.</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-gray-500" />
-                      <span>{location.horarioMaximo}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Lightbulb className="w-4 h-4 text-gray-500" />
-                      <span>{location.potenciaLuz}</span>
-                    </div>
+                    {location.horarioInterior && (
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-gray-500" />
+                        <span>Interior: {location.horarioInterior}</span>
+                      </div>
+                    )}
+                    {location.precio ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-500 font-medium">€</span>
+                        <span>{location.precio.toLocaleString()}€</span>
+                      </div>
+                    ) : null}
                   </div>
 
                   {/* Features */}
                   <div className="flex flex-wrap gap-2">
-                    {location.accesoParkingSi && (
-                      <Badge variant="outline" className="gap-1">
-                        <Car className="w-3 h-3" />
-                        Parking
-                      </Badge>
-                    )}
-                    {location.jardin && (
-                      <Badge variant="outline" className="gap-1">
-                        <Trees className="w-3 h-3" />
-                        Jardín
-                      </Badge>
-                    )}
-                    {location.piscina && (
-                      <Badge variant="outline" className="gap-1">
-                        <Waves className="w-3 h-3" />
-                        Piscina
-                      </Badge>
-                    )}
-                    {location.posibilidadMusica && (
-                      <Badge variant="outline" className="gap-1">
-                        <Music className="w-3 h-3" />
-                        Música
-                      </Badge>
-                    )}
-                    {location.cocina && (
-                      <Badge variant="outline" className="gap-1">
-                        <Utensils className="w-3 h-3" />
-                        Cocina
-                      </Badge>
-                    )}
+                    {location.accesoParkingSi && <Badge variant="outline" className="gap-1"><Car className="w-3 h-3" />Parking</Badge>}
+                    {location.jardin && <Badge variant="outline" className="gap-1"><Trees className="w-3 h-3" />Jardín</Badge>}
+                    {location.piscina && <Badge variant="outline" className="gap-1"><Waves className="w-3 h-3" />Piscina</Badge>}
+                    {(location.musicaInterior || location.musicaExterior) && <Badge variant="outline" className="gap-1"><Music className="w-3 h-3" />Música</Badge>}
+                    {location.cocina && <Badge variant="outline" className="gap-1"><Utensils className="w-3 h-3" />Cocina</Badge>}
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex gap-2 pt-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => navigate(`/locations/${location.id}`)}
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Ver
-                    </Button>
+                  {/* Actions - stop propagation so clicking edit/delete doesn't open location */}
+                  <div className="flex gap-2 pt-2" onClick={e => e.stopPropagation()}>
                     <Button
                       variant="outline"
                       size="sm"
