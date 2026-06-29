@@ -102,7 +102,11 @@ export function Dashboard() {
       filtered = filtered.filter(loc => {
         // Search in basic fields
         const matchesBasic = loc.nombre.toLowerCase().includes(query) ||
-          loc.comentarios.toLowerCase().includes(query);
+          loc.comentarios.toLowerCase().includes(query) ||
+          (loc.calle || "").toLowerCase().includes(query) ||
+          (loc.ciudad || "").toLowerCase().includes(query) ||
+          (loc.provincia || "").toLowerCase().includes(query) ||
+          (loc.codigoPostal || "").toLowerCase().includes(query);
         
         // Search in contacts
         const matchesContacts = loc.contactos?.some(contact =>
@@ -247,7 +251,7 @@ export function Dashboard() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
                 type="text"
-                placeholder="Buscar por nombre, contacto o comentarios..."
+                placeholder="Buscar por nombre, ciudad, contacto o comentarios..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
